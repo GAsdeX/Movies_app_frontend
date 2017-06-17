@@ -11,11 +11,28 @@ export class Home extends React.Component {
 
   }
 
+  componentDidMount() {
+    console.log('yo');
+    let movies_list = this.movies_list;
+    // console.log(this.movies_list);
+
+      $.get('http://localhost:3000/getmovies', function(data) {
+          data.forEach(function(i){
+            movies_list.push(i)
+            console.log(i);
+          })
+       });
+       console.log(movies_list);
+      this.setState({
+        movies_list : movies_list
+      })
+  }
+
 
   doGet() {
     // console.log(this.movies_list);
 
-    let movies_list = this.movies_list;
+    let movies_list = this.state.movies_list;
     console.log(this.movies_list);
 
       $.get('http://localhost:3000/getmovies', function(data) {
@@ -31,9 +48,9 @@ export class Home extends React.Component {
       // console.log(movies_list);
   }
 
-  constructor (){
-    super();
-    this.movies_list = [];
+  constructor (props){
+    super(props);
+    this.state = {movies_list:[]};
     this.doGet = this.doGet.bind(this);
 
   }
