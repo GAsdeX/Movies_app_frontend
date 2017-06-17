@@ -13,7 +13,7 @@ export class Home extends React.Component {
 
   componentDidMount() {
     console.log('yo');
-    let movies_list = this.movies_list;
+    let movies_list = this.state.movies_list;
     // console.log(this.movies_list);
 
       $.get('http://localhost:3000/getmovies', function(data) {
