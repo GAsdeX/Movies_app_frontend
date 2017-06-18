@@ -1,9 +1,11 @@
 import React from 'react';
 import { render } from 'react-dom';
 import { on } from 'react-router';
+import {Modal, Button} from 'react-bootstrap';
 
 import {Header} from './components/Header/'
 import {Home} from './components/Home/'
+
 // import {Card} from './components/Card/'
 // import {DatePicker} from 'react-toolbox'
 
@@ -26,6 +28,8 @@ class App extends React.Component {
               <Home name="MAX" user={user} age={27} />
           </div>
         </div>
+
+
       </div>
     );
   }

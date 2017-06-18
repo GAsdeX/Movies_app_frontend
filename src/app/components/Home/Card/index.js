@@ -2,24 +2,25 @@ import React from "react";
 
 export class Card extends React.Component {
   constructor (props){
-    super();
+    super(props);
 
-    this.item_card = {
-      title: props.title,
-      format: props.format,
-      release_year: props.release_year,
-      stars: props.stars
-    };
+    
   }
 
 
   render(){
     return (
-      <div>
-        <button className="delete-tihs"></button>
-        <button className="extend-this"></button>
-        <div className="top-bar">{this.title}</div>
-        <div className="bottom-bar"></div>
+      <div className="col-xs-3">
+        <div className="card-wrapper">
+          <button onClick={()=>{this.dellMovie(item._id)}} className="delete-tihs"></button>
+          <button className="extend-this"></button>
+          <div className="top-bar">
+            <p>{item.title}</p>
+          </div>
+
+          <div className="bottom-bar">{item.format}</div>
+        </div>
+
       </div>
     );
   }
