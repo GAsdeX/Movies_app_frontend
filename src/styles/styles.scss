@@ -1,0 +1,44 @@
+.add-new {
+  position: fixed;
+  right: 80px;
+  bottom: 80px;
+}
+
+.card-wrapper {
+
+  height: 200px;
+  box-shadow: 3px 2px 7px;
+  border-radius: 4px;
+  position: relative;
+
+  .delete-tihs {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    z-index: 2;
+  }
+
+  .extend-this {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    z-index: 2;
+  }
+
+  .top-bar {
+    height: 70%;
+    width: 100%;
+    display: flex;
+    p {
+      margin: auto;
+      font-size: 30px;
+    }
+  }
+
+  .bottom-bar {
+    padding: 15px;
+    border-top: 1px solid;
+    height: 30%;
+    width: 100%;
+  }
+}

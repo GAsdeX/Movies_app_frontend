@@ -5,6 +5,7 @@ import { on } from 'react-router';
 import {Header} from './components/Header/'
 import {Home} from './components/Home/'
 // import {Card} from './components/Card/'
+// import {DatePicker} from 'react-toolbox'
 
 
 class App extends React.Component {
@@ -21,7 +22,7 @@ class App extends React.Component {
           </div>
         </div>
         <div className="row">
-          <div className="col-xs-3">
+          <div className="col-xs-12">
               <Home name="MAX" user={user} age={27} />
           </div>
         </div>

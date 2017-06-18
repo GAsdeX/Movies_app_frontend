@@ -4,51 +4,80 @@ import React from "react";
 // import {render} from "react-render";
 //
 // import { Card } from "./Card/"
+// import '/Home.css';
 
 export class Home extends React.Component {
 
   addMovie(){
+    $.post()
+  }
+
+  dellMovie(){
 
   }
 
   componentDidMount() {
-    console.log('yo');
-    var movies_list = this.state.movies_list;
-    console.log(this.state);
+      console.log('yo');
+      var movies_list = this.state.movies_list;
+      // console.log(this.state);
+      //save current this
+      var self = this;
+      $.get('http://localhost:3000/getmovies', function(data) {
+          data.forEach(function(i){
+              movies_list.push(i)
+          })
+          //inside function this will point to function itself, not on a class
+          self.setState({
+              movies_list : movies_list
+          })
+      });
 
-    $.get('http://localhost:3000/getmovies', function(data) {
-        data.forEach(function(i){
-          movies_list.push(i)
-        })
-     });
 
-     this.setState({
-       movies_list : movies_list
-     })
   }
 
 
   constructor (props){
     super(props);
-    this.componentDidMount = this.componentDidMount.bind(this);
+    // this.dellMovie = this.dellMovie.bind(this);
     this.state = {movies_list : [] };
 
+    this.dellMovie = function (id) {
+      $.ajax({
+        url: 'http://localhost:3000/dellmovie/'+id,
+        type: 'DELETE',
+        traditional:true,
+        dataType: 'json',
+        success: function(result) {
+          // Do something with the result
+        }
+      });
+    }
 
   }
 
 
   render(){
-    var movies_list = this.state;
-    // console.log(this.state.movies_list);  .... нихуя не передалось
+    var movies_list = (this.state.movies_list);  //.... нихуя не передалось
+    console.log(movies_list);
+
     return (
           <div>
-            <p>IN a component</p>
-            <p>Yor name is {this.props.name}, your age is {this.props.age}</p>
 
-            <div>
-              <div className="top-bar">{JSON.stringify(movies_list)}</div>
-              <div className="bottom-bar"></div>
-            </div>
+            {this.state.movies_list.map((item,i) =>
+              <div className="col-xs-3">
+                <div className="card-wrapper">
+                  <button onClick={this.dellMovie(item._id)} className="delete-tihs"></button>
+                  <button className="extend-this"></button>
+                  <div className="top-bar">
+                    <p>{item.title}</p>
+                  </div>
+
+                  <div className="bottom-bar">{item.format}</div>
+                </div>
+
+              </div>
+          )}
+
           </div>
 
       );
