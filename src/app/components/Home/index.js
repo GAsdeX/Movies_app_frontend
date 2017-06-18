@@ -6,14 +6,25 @@ import React from "react";
 // import { Card } from "./Card/"
 // import '/Home.css';
 
+
+// bundle.js:8499 Uncaught Error: Cannot find module "./components/Home/"
+
 export class Home extends React.Component {
 
   addMovie(){
     $.post()
   }
 
-  dellMovie(){
-
+  dellMovie(id){
+    $.ajax({
+      url: 'http://localhost:3000/dellmovie/'+id,
+      type: 'DELETE',
+      traditional:true,
+      dataType: 'json',
+      success: (result) => {
+        this.forceUpdate()
+      }
+    });
   }
 
   componentDidMount() {
@@ -38,20 +49,10 @@ export class Home extends React.Component {
 
   constructor (props){
     super(props);
-    // this.dellMovie = this.dellMovie.bind(this);
+    this.dellMovie = this.dellMovie.bind(this);
     this.state = {movies_list : [] };
 
-    this.dellMovie = function (id) {
-      $.ajax({
-        url: 'http://localhost:3000/dellmovie/'+id,
-        type: 'DELETE',
-        traditional:true,
-        dataType: 'json',
-        success: function(result) {
-          // Do something with the result
-        }
-      });
-    }
+
 
   }
 
