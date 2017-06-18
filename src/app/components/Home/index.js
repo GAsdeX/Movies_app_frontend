@@ -96,7 +96,7 @@ export class Home extends React.Component {
     var addFormState = this.state.addFormState;
     console.log(movies_list);
 
-    let form = <div className="new-movie">
+    var form = <div className="new-movie">
 
                 <div className="ovarlay"></div>
                 <div className="input-field" >
@@ -105,17 +105,12 @@ export class Home extends React.Component {
                   <input type="text" ref='format' placeholder="Format"/>
                   <input type="number" ref='release_year' placeholder="Release year"/>
                   <input ref='stars' placeholder="Stars"/>
-                  <button onClick={() => this.addNewMovie.bind(this)}>Add Star</button>
+                  <button onClick={() => this.addNewMovie.bind(this);}>Add Star</button>
                   <input type='file'/>
                     <button onClick={() => this.hideAddForm}>Add Movie</button>
                     <button onClick={() => this.hideAddForm}>Add Movie</button>
                 </div>
               </div>
-
-    let movieDesc = <div className="desc-movie">
-                      <div className="ovarlay"></div>
-                      <div className="desc"></div>
-                    </div>
 
     return (
           <div>
@@ -137,21 +132,7 @@ export class Home extends React.Component {
           <button onClick={() => this.openCreateWindow()} className="add-new"></button>
 
           {addFormState ? form : null }
-          <div onHide={addFormState} className="new-movie">
 
-                      <div className="ovarlay"></div>
-                      <div className="input-field" >
-                        <h3>Add movie</h3>
-                        <input type="text" ref="title" placeholder="Title"/>
-                        <input type="text" ref='format' placeholder="Format"/>
-                        <input type="number" ref='release_year' placeholder="Release year"/>
-                        <input ref='stars' placeholder="Stars"/>
-                        <button onClick={() => this.addNewMovie.bind(this)}>Add Star</button>
-                        <input type='file'/>
-                          <button onClick={() => this.hideAddForm}>Add Movie</button>
-                          <button onClick={() => this.hideAddForm}>Add Movie</button>
-                      </div>
-                    </div>
           </div>
 
       );
