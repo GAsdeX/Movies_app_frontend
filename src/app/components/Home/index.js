@@ -3,7 +3,7 @@
 import React from "react";
 import {CardView} from './CardView/';
 
-import { convertINI, compare } from './config';
+import { convertINI, sortOn } from './config';
 
 export class Home extends React.Component {
 
@@ -12,7 +12,6 @@ export class Home extends React.Component {
         addFormState: true
     })
   }
-
   dellMovie(id){
 
     var movies_list = [];
@@ -35,14 +34,12 @@ export class Home extends React.Component {
       }
     });
   }
-
   hideAddForm(event) {
     this.setState({
         addFormState: false
     })
     console.log('hide');
   }
-
   loadINI(event) {
     // document.getElementById('load').addEventListener('change', readFile, false);
 
@@ -50,20 +47,17 @@ export class Home extends React.Component {
     var text = NaN;
     var result = NaN;
     var reader = new FileReader();
-    var movies_list = [];
-    reader.onload = function(){
-      text = reader.result;
+    var loading_movies = [];
+    reader.onload = () => {
+      loading_movies = convertINI(reader.result);
+      console.log(loading_movies.length);
       this.setState({
-        movies_list : movies_list
+        loading_movies : loading_movies
       })
-      result = convertINI(text);
-      console.log(result);
-
     };
     reader.readAsText(input.files[0]);
 
   }
-
   addNewMovie(event) {
     event.preventDefault();
     let title = this.refs.title.value;
@@ -73,40 +67,68 @@ export class Home extends React.Component {
     let iniFile = this.refs.iniFile.value;
     let movies_list = [];
 
-    $.ajax({
-      url: "http://localhost:3000/addmovie",
-      type: 'POST',
-      traditional:true,
-      dataType: 'json',
-      data: {
-        title : title,
-        release_year : release_year,
-        format : format,
-        stars : stars
-      },
-      success: (result) => {
-        var self = this;
-        $.get('http://localhost:3000/getmovies', function(data) {
-            data.forEach(function(i){
-                movies_list.push(i)
-            })
-            //inside function this will point to function itself, not on a class
-            self.setState({
-                movies_list : movies_list
-            })
-        });
-      }
-    });
+    let loading_movies = (iniFile ? this.state.loading_movies : { title : title,
+                                                                  release_year : release_year,
+                                                                  format : format,
+                                                                  stars : stars});
+    // console.log(loading_movies);
 
-    console.log(iniFile);
+
 
     if (iniFile) {
-      console.log('ffff');
+      let movies_list = [];
+      loading_movies.map(function(i){
+
+          $.ajax({
+            url: "http://localhost:3000/addmovie",
+            type: 'POST',
+            traditional:true,
+            dataType: 'json',
+            data: i,
+            success: (result) => {
+              $.get('http://localhost:3000/getmovies', function(data) {
+                  data.forEach(function(i){
+                      movies_list.push(i)
+                  })
+                  //inside function this will point to function itself, not on a class
+                  this.setState({
+                      movies_list : movies_list
+                  })
+              });
+            }
+          })
+
+      })
+      var self = this;
+      console.log(this);
+      $.get('http://localhost:3000/getmovies', function(data) {
+          data.forEach(function(i){
+              movies_list.push(i)
+          })
+          //inside function this will point to function itself, not on a class
+          this.setState({
+              movies_list : movies_list
+          })
+          debugger;
+      });
+    } else {
+        $.ajax({
+        url: "http://localhost:3000/addmovie",
+        type: 'POST',
+        traditional:true,
+        dataType: 'json',
+        data: { title : title,
+                release_year : release_year,
+                format : format,
+                stars : stars
+              },
+        success: (result) => {
+          console.log(result);
+        }
+      });
     }
 
-    // console.log(title,'ffff');
   }
-
   componentDidMount() {  // refrash while uploading
 
       console.log('yo');
@@ -126,35 +148,60 @@ export class Home extends React.Component {
 
 
   }
-
-  describeCard(item){
-    console.log(item);
+  describeCard(i){
+    console.log(i);
     this.setState({
-      currentMovie : item,
+      currentMovie : i,
       describeMovie : true
     })
-  }
 
+    console.log(this.state.currentMovie);
+    // debugger;
+  }
   sortByAlphabet() {
     var movies_list = [];
     console.log(movies_list);
 
-    $.get('http://localhost:3000/getmovies', function(data) {
+    $.get('http://localhost:3000/getmovies', (data) => {
         data.forEach(function(i){
+          // debugger;
             movies_list.push(i)
-            console.log(i);
+            // console.log(i);
         })
         //inside function this will point to function itself, not on a class
+        // console.log(sortOn(movies_list, "title"));
 
+
+        this.setState({
+          movies_list :movies_list.sort(function(a, b) {   console.log(a);
+                                                          console.log(b);
+
+                                                          if (a.title < b.title) {
+                                                            return -1;
+                                                          }
+                                                          if (a.title > b.title) {
+                                                            return 1;
+                                                          }
+
+                                                          // names must be equal
+                                                          return 0}
+                                                        )
+        })
     });
+    // console.log(movies_list.sort(compare));
+
+
     console.log(movies_list);
-    movies_list.sort(compare);
-    console.log(movies_list);
+  }
+
+  hideDescr() {
+    this.setState({
+      describeMovie : false
+    })
   }
 
   constructor (props){
     super(props);
-
     this.dellMovie = this.dellMovie.bind(this);
     this.openCreateWindow = this.openCreateWindow.bind(this);
     this.hideAddForm = this.hideAddForm.bind(this);
@@ -162,11 +209,14 @@ export class Home extends React.Component {
     this.loadINI = this.loadINI.bind(this);
     this.describeCard = this.describeCard.bind(this);
     this.sortByAlphabet = this.sortByAlphabet.bind(this);
+    this.hideDescr = this.hideDescr.bind(this);
 
     this.state = {
       movies_list : [],
+      loading_movies : [],
       addFormState : false,
-      describeMovie : false
+      describeMovie : false,
+      currentMovie : {}
     };
   }
 
@@ -174,8 +224,10 @@ export class Home extends React.Component {
   render(){
     var movies_list = this.state.movies_list;
     var addFormState = this.state.addFormState;
-    var describeMovie = this.state.describeMovie  ;
-    // console.log(movies_list);
+    var describeMovie = this.state.describeMovie;
+    var loading_movies = this.state.loading_movies;
+    var currentMovie = this.state.currentMovie;
+
     var form = <div className="new-movie">
                 <div onClick={this.hideAddForm} className="ovarlay"></div>
                 <form className="input-field" >
@@ -191,31 +243,31 @@ export class Home extends React.Component {
                   <input ref='stars' placeholder="Stars"/>
 
                   <input ref="iniFile" id="file-input" onChange={this.loadINI} type='file'/>
-
+                  <p>{loading_movies.length}</p>
                   <button onClick={this.addNewMovie}>Add movie</button>
                 </form>
 
               </div>
-    var currentMovie = NaN;
     var display = <div className="desc-movie">
-                    <div className="overlay"></div>
+                    <div className="overlay" onClick={this.hideDescr}></div>
                     <div className="desc">
-                      <p>{currentMovie.title}</p>
-                      <p>{currentMovie.release_year}</p>
+                      <h4>{currentMovie.title}</h4>
+                      <hr/>
                       <p>{currentMovie.format}</p>
+                      <p>{currentMovie.release_year}</p>
                       <p>{currentMovie.stars}</p>
                     </div>
                   </div>
 
-
     return (
           <div>
 
-            <button type="submit" onClick={this.sortByAlphabet}>SORT BY TITLE</button>
+            <div className="col-xs-12"><button type="submit" onClick={this.sortByAlphabet}>SORT BY TITLE</button></div>
             {this.state.movies_list.map((item, i) =>
-              <div className="col-xs-3" key={i}>
+              <div className="col-xs-12 col-sm-6 col-md-4 col-lg-3" key={i}>
+                <button onClick={()=>{this.dellMovie(item._id)}} className="delete-tihs"></button>
                 <div className="card-wrapper" onClick={() => {this.describeCard(item)}}>
-                  <button onClick={()=>{this.dellMovie(item._id)}} className="delete-tihs"></button>
+
                   <button className="extend-this"></button>
                   <div className="top-bar">
                     <p>{item.title}</p>
@@ -227,12 +279,9 @@ export class Home extends React.Component {
               </div>
           )}
           <button onClick={() => this.openCreateWindow()} className="add-new"></button>
-
-
           {addFormState ? form : null }
+
           {describeMovie ? display : null}
-
-
           </div>
 
       );

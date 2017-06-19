@@ -10,6 +10,13 @@
   cursor: pointer;
 }
 
+.delete-tihs {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  z-index: 2;
+}
+
 .card-wrapper {
 
   height: 200px;
@@ -18,12 +25,6 @@
   position: relative;
   margin-bottom: 30px;
 
-  .delete-tihs {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    z-index: 2;
-  }
 
   .extend-this {
     position: absolute;
@@ -87,18 +88,26 @@
 }
 
 .desc-movie {
-  .ovarlay {
+  .overlay {
     position: fixed;
     left: 0;
     right: 0;
     top: 0;
     bottom: 0;
     background: rgba(0,0,0,0.6);
-    z-index: 2;
+    z-index: 3;
   }
 
   .desc{
-    width: 500px;
-    max-width: 500px;
+    z-index: 4;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    max-width: 400px;
+    background: white;
+    padding: 12px;
+
   }
 }
