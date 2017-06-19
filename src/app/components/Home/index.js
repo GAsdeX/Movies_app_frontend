@@ -3,7 +3,19 @@
 import React from "react";
 import {CardView} from './CardView/'
 
+function compare(a, b) {
+  // Use toUpperCase() to ignore character casing
+  const genreA = a.genre.toUpperCase();
+  const genreB = b.genre.toUpperCase();
 
+  let comparison = 0;
+  if (genreA > genreB) {
+    comparison = 1;
+  } else if (genreA < genreB) {
+    comparison = -1;
+  }
+  return comparison;
+}
 
 
 export class Home extends React.Component {
@@ -49,15 +61,6 @@ export class Home extends React.Component {
     var e = this.refs.iniFile.files[0];
     // var file=fopen(getScriptPath(e),0);
     console.log(e);
-    // console.log(readText(e));
-
-
-    // var reader = new FileReader();
-    // reader.onload = function(e) {
-    //   var contents = e;
-    //   displayContents(contents);
-    // };
-    // reader.readAsText(file);
 
   }
 
@@ -68,17 +71,33 @@ export class Home extends React.Component {
     let format = this.refs.format.value;
     let stars = this.refs.stars.value;
     let iniFile = this.refs.iniFile.value;
+    let movies_list = [];
 
-    $.post("http://localhost:3000/addmovie",
-      {
+    $.ajax({
+      url: "http://localhost:3000/addmovie",
+      type: 'POST',
+      traditional:true,
+      dataType: 'json',
+      data: {
         title : title,
         release_year : release_year,
         format : format,
         stars : stars
       },
-        function(result){
-            console.log('ddddd');
+      success: (result) => {
+        var self = this;
+        $.get('http://localhost:3000/getmovies', function(data) {
+            data.forEach(function(i){
+                movies_list.push(i)
+            })
+            //inside function this will point to function itself, not on a class
+            self.setState({
+                movies_list : movies_list
+            })
         });
+      }
+    });
+
     console.log(iniFile);
 
     if (iniFile) {
@@ -116,6 +135,23 @@ export class Home extends React.Component {
     })
   }
 
+  sortByAlphabet() {
+    var movies_list = [];
+    console.log(movies_list);
+
+    $.get('http://localhost:3000/getmovies', function(data) {
+        data.forEach(function(i){
+            movies_list.push(i)
+            console.log(i);
+        })
+        //inside function this will point to function itself, not on a class
+
+    });
+    console.log(movies_list);
+    movies_list.sort(compare);
+    console.log(movies_list);
+  }
+
   constructor (props){
     super(props);
 
@@ -124,7 +160,8 @@ export class Home extends React.Component {
     this.hideAddForm = this.hideAddForm.bind(this);
     this.addNewMovie = this.addNewMovie.bind(this);
     this.loadINI = this.loadINI.bind(this);
-    this.describeCard = this.describeCard.bind(this)
+    this.describeCard = this.describeCard.bind(this);
+    this.sortByAlphabet = this.sortByAlphabet.bind(this);
 
     this.state = {
       movies_list : [],
@@ -144,14 +181,20 @@ export class Home extends React.Component {
                 <form className="input-field" >
                   <h3>Add movie</h3>
                   <input type="text" ref="title" placeholder="Title"/>
-                  <input type="text" ref='format' placeholder="Format"/>
+                  <input type="text" list="format" ref='format' placeholder="Format"/>
+                     <datalist id="format">
+                      <option>DVD</option>
+                      <option>Blu-ray</option>
+                      <option>VHS</option>
+                     </datalist>
                   <input type="number" ref='release_year' placeholder="Release year"/>
                   <input ref='stars' placeholder="Stars"/>
-                  <button onClick={this.addNewMovie}>Add Star</button>
+
                   <input ref="iniFile" onChange={this.loadINI} type='file'/>
-                  <button >Add Movie</button>
+
+                  <button onClick={this.addNewMovie}>Add movie</button>
                 </form>
-                <button onClick={this.hideAddForm}>Add Movie</button>
+
               </div>
     var currentMovie = NaN;
     var display = <div className="desc-movie">
@@ -168,6 +211,7 @@ export class Home extends React.Component {
     return (
           <div>
 
+            <button type="submit" onClick={this.sortByAlphabet}>SORT BY TITLE</button>
             {this.state.movies_list.map((item, i) =>
               <div className="col-xs-3" key={i}>
                 <div className="card-wrapper" onClick={() => {this.describeCard(item)}}>
