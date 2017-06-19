@@ -63,7 +63,7 @@
 	
 	var _Header = __webpack_require__(/*! ./components/Header/ */ 459);
 	
-	var _Home = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./components/Home/\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+	var _Home = __webpack_require__(/*! ./components/Home/ */ 460);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -45450,6 +45450,284 @@
 	  }]);
 	
 	  return Header;
+	}(_react2.default.Component);
+
+/***/ }),
+/* 460 */
+/*!******************************************!*\
+  !*** ./src/app/components/Home/index.js ***!
+  \******************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.Home = undefined;
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _CardView = __webpack_require__(/*! ./CardView/ */ 461);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } // HOME PARE COMPONENT
+	
+	// bundle.js:8499 Uncaught Error: Cannot find module "./components/Home/"
+	
+	
+	var Home = exports.Home = function (_React$Component) {
+	  _inherits(Home, _React$Component);
+	
+	  _createClass(Home, [{
+	    key: 'openCreateWindow',
+	    value: function openCreateWindow(event) {
+	      this.setState({
+	        addFormState: true
+	      });
+	    }
+	  }, {
+	    key: 'dellMovie',
+	    value: function dellMovie(id) {
+	      var _this2 = this;
+	
+	      var movies_list = [];
+	      $.ajax({
+	        url: 'http://localhost:3000/dellmovie/' + id,
+	        type: 'DELETE',
+	        traditional: true,
+	        dataType: 'json',
+	        success: function success(result) {
+	          var self = _this2;
+	          $.get('http://localhost:3000/getmovies', function (data) {
+	            data.forEach(function (i) {
+	              movies_list.push(i);
+	            }
+	            //inside function this will point to function itself, not on a class
+	            );self.setState({
+	              movies_list: movies_list
+	            });
+	          });
+	        }
+	      });
+	    }
+	  }, {
+	    key: 'hideAddForm',
+	    value: function hideAddForm(event) {
+	      this.setState({
+	        addFormState: false
+	      });
+	      console.log('hide');
+	    }
+	  }, {
+	    key: 'addNewMovie',
+	    value: function addNewMovie(event) {
+	      event.preventDefault();
+	      var title = this.refs.title.value;
+	      var release_year = this.refs.release_year.value;
+	      var format = this.refs.format.value;
+	      var stars = this.refs.stars.value;
+	
+	      $.post("http://localhost:3000/addmovie", {
+	        title: title,
+	        release_year: release_year,
+	        format: format,
+	        stars: stars
+	      }, function (result) {
+	        console.log('ddddd');
+	      });
+	      console.log(this.refs);
+	
+	      console.log(title, 'ffff');
+	    }
+	  }, {
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      // refrash while uploading
+	
+	      console.log('yo');
+	      var movies_list = this.state.movies_list;
+	      // console.log(this.state);
+	      //save current this
+	      var self = this;
+	      $.get('http://localhost:3000/getmovies', function (data) {
+	        data.forEach(function (i) {
+	          movies_list.push(i);
+	        }
+	        //inside function this will point to function itself, not on a class
+	        );self.setState({
+	          movies_list: movies_list
+	        });
+	      });
+	    }
+	  }]);
+	
+	  function Home(props) {
+	    _classCallCheck(this, Home);
+	
+	    var _this = _possibleConstructorReturn(this, (Home.__proto__ || Object.getPrototypeOf(Home)).call(this, props));
+	
+	    _this.dellMovie = _this.dellMovie.bind(_this);
+	    _this.openCreateWindow = _this.openCreateWindow.bind(_this);
+	    _this.hideAddForm = _this.hideAddForm.bind(_this);
+	    _this.addNewMovie = _this.addNewMovie.bind(_this);
+	    _this.state = {
+	      movies_list: [],
+	      addFormState: false
+	    };
+	
+	    return _this;
+	  }
+	
+	  _createClass(Home, [{
+	    key: 'render',
+	    value: function render() {
+	      var _this3 = this;
+	
+	      var movies_list = this.state.movies_list;
+	      var addFormState = this.state.addFormState;
+	      console.log(movies_list);
+	
+	      var form = _react2.default.createElement(
+	        'div',
+	        { className: 'new-movie' },
+	        _react2.default.createElement('div', { className: 'ovarlay' }),
+	        _react2.default.createElement(
+	          'form',
+	          { className: 'input-field' },
+	          _react2.default.createElement(
+	            'h3',
+	            null,
+	            'Add movie'
+	          ),
+	          _react2.default.createElement('input', { type: 'text', ref: 'title', placeholder: 'Title' }),
+	          _react2.default.createElement('input', { type: 'text', ref: 'format', placeholder: 'Format' }),
+	          _react2.default.createElement('input', { type: 'number', ref: 'release_year', placeholder: 'Release year' }),
+	          _react2.default.createElement('input', { ref: 'stars', placeholder: 'Stars' }),
+	          _react2.default.createElement(
+	            'button',
+	            { onClick: this.addNewMovie },
+	            'Add Star'
+	          ),
+	          _react2.default.createElement('input', { ref: 'iniFile', type: 'file' }),
+	          _react2.default.createElement(
+	            'button',
+	            { onClick: this.hideAddForm },
+	            'Add Movie'
+	          )
+	        ),
+	        _react2.default.createElement(
+	          'button',
+	          { onClick: this.hideAddForm },
+	          'Add Movie'
+	        )
+	      );
+	
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        this.state.movies_list.map(function (item, i) {
+	          return _react2.default.createElement(
+	            'div',
+	            { className: 'col-xs-3', key: i },
+	            _react2.default.createElement(
+	              'div',
+	              { className: 'card-wrapper' },
+	              _react2.default.createElement('button', { onClick: function onClick() {
+	                  _this3.dellMovie(item._id);
+	                }, className: 'delete-tihs' }),
+	              _react2.default.createElement('button', { className: 'extend-this' }),
+	              _react2.default.createElement(
+	                'div',
+	                { className: 'top-bar' },
+	                _react2.default.createElement(
+	                  'p',
+	                  null,
+	                  item.title
+	                )
+	              ),
+	              _react2.default.createElement(
+	                'div',
+	                { className: 'bottom-bar' },
+	                item.format
+	              )
+	            )
+	          );
+	        }),
+	        _react2.default.createElement('button', { onClick: function onClick() {
+	            return _this3.openCreateWindow();
+	          }, className: 'add-new' }),
+	        addFormState ? form : null
+	      );
+	    }
+	  }]);
+	
+	  return Home;
+	}(_react2.default.Component);
+	
+	Home.propTypes = {
+	  name: _react2.default.PropTypes.string,
+	  age: _react2.default.PropTypes.number
+	};
+
+/***/ }),
+/* 461 */
+/*!***************************************************!*\
+  !*** ./src/app/components/Home/CardView/index.js ***!
+  \***************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.CardView = undefined;
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } // card view
+	
+	var CardView = exports.CardView = function (_React$Component) {
+	  _inherits(CardView, _React$Component);
+	
+	  function CardView() {
+	    _classCallCheck(this, CardView);
+	
+	    return _possibleConstructorReturn(this, (CardView.__proto__ || Object.getPrototypeOf(CardView)).apply(this, arguments));
+	  }
+	
+	  _createClass(CardView, [{
+	    key: "render",
+	    value: function render() {
+	      return _react2.default.createElement(
+	        "div",
+	        null,
+	        "llll"
+	      );
+	    }
+	  }]);
+	
+	  return CardView;
 	}(_react2.default.Component);
 
 /***/ })

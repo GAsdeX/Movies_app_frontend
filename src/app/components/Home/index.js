@@ -5,7 +5,6 @@ import {CardView} from './CardView/'
 
 
 
-// bundle.js:8499 Uncaught Error: Cannot find module "./components/Home/"
 
 export class Home extends React.Component {
 
@@ -45,14 +44,48 @@ export class Home extends React.Component {
     console.log('hide');
   }
 
-  addNewMovie(event) {
-    this.preventDefault();
-    let title = this.refs.title;
-    let release_year = this.refs.release_year;
-    let format = this.refs.format;
-    let stars = this.refs.stars;
+  loadINI(event) {
 
-    console.log(title,'ffff');
+    var e = this.refs.iniFile.files[0];
+    // var file=fopen(getScriptPath(e),0);
+    console.log(e);
+    // console.log(readText(e));
+
+
+    // var reader = new FileReader();
+    // reader.onload = function(e) {
+    //   var contents = e;
+    //   displayContents(contents);
+    // };
+    // reader.readAsText(file);
+
+  }
+
+  addNewMovie(event) {
+    event.preventDefault();
+    let title = this.refs.title.value;
+    let release_year = this.refs.release_year.value;
+    let format = this.refs.format.value;
+    let stars = this.refs.stars.value;
+    let iniFile = this.refs.iniFile.value;
+
+    $.post("http://localhost:3000/addmovie",
+      {
+        title : title,
+        release_year : release_year,
+        format : format,
+        stars : stars
+      },
+        function(result){
+            console.log('ddddd');
+        });
+    console.log(iniFile);
+
+    if (iniFile) {
+      console.log('ffff');
+    }
+
+    // console.log(title,'ffff');
   }
 
   componentDidMount() {  // refrash while uploading
@@ -75,6 +108,13 @@ export class Home extends React.Component {
 
   }
 
+  describeCard(item){
+    console.log(item);
+    this.setState({
+      currentMovie : item,
+      describeMovie : true
+    })
+  }
 
   constructor (props){
     super(props);
@@ -82,42 +122,55 @@ export class Home extends React.Component {
     this.dellMovie = this.dellMovie.bind(this);
     this.openCreateWindow = this.openCreateWindow.bind(this);
     this.hideAddForm = this.hideAddForm.bind(this);
+    this.addNewMovie = this.addNewMovie.bind(this);
+    this.loadINI = this.loadINI.bind(this);
+    this.describeCard = this.describeCard.bind(this)
 
     this.state = {
       movies_list : [],
-      addFormState : false
+      addFormState : false,
+      describeMovie : false
     };
-
   }
 
 
   render(){
     var movies_list = this.state.movies_list;
     var addFormState = this.state.addFormState;
-    console.log(movies_list);
-
+    var describeMovie = this.state.describeMovie  ;
+    // console.log(movies_list);
     var form = <div className="new-movie">
-
-                <div className="ovarlay"></div>
+                <div onClick={this.hideAddForm} className="ovarlay"></div>
                 <form className="input-field" >
                   <h3>Add movie</h3>
                   <input type="text" ref="title" placeholder="Title"/>
                   <input type="text" ref='format' placeholder="Format"/>
                   <input type="number" ref='release_year' placeholder="Release year"/>
                   <input ref='stars' placeholder="Stars"/>
-                  <button onClick={() => this.addNewMovie.bind(this)}>Add Star</button>
-                  <input type='file'/>
-                    <button onClick={function(){return this.hideAddForm()}}>Add Movie</button>
-                    // <button onClick={() => this.hideAddForm}>Add Movie</button>
+                  <button onClick={this.addNewMovie}>Add Star</button>
+                  <input ref="iniFile" onChange={this.loadINI} type='file'/>
+                  <button >Add Movie</button>
                 </form>
+                <button onClick={this.hideAddForm}>Add Movie</button>
               </div>
+    var currentMovie = NaN;
+    var display = <div className="desc-movie">
+                    <div className="overlay"></div>
+                    <div className="desc">
+                      <p>{currentMovie.title}</p>
+                      <p>{currentMovie.release_year}</p>
+                      <p>{currentMovie.format}</p>
+                      <p>{currentMovie.stars}</p>
+                    </div>
+                  </div>
+
 
     return (
           <div>
 
             {this.state.movies_list.map((item, i) =>
               <div className="col-xs-3" key={i}>
-                <div className="card-wrapper">
+                <div className="card-wrapper" onClick={() => {this.describeCard(item)}}>
                   <button onClick={()=>{this.dellMovie(item._id)}} className="delete-tihs"></button>
                   <button className="extend-this"></button>
                   <div className="top-bar">
@@ -133,7 +186,9 @@ export class Home extends React.Component {
 
 
           {addFormState ? form : null }
-          <button onClick={this.hideAddForm()}>Add Movie</button>
+          {describeMovie ? display : null}
+
+
           </div>
 
       );
