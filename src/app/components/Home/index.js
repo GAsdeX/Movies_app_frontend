@@ -1,22 +1,9 @@
 // HOME PARE COMPONENT
 
 import React from "react";
-import {CardView} from './CardView/'
+import {CardView} from './CardView/';
 
-function compare(a, b) {
-  // Use toUpperCase() to ignore character casing
-  const genreA = a.genre.toUpperCase();
-  const genreB = b.genre.toUpperCase();
-
-  let comparison = 0;
-  if (genreA > genreB) {
-    comparison = 1;
-  } else if (genreA < genreB) {
-    comparison = -1;
-  }
-  return comparison;
-}
-
+import { convertINI, compare } from './config';
 
 export class Home extends React.Component {
 
@@ -57,10 +44,23 @@ export class Home extends React.Component {
   }
 
   loadINI(event) {
+    // document.getElementById('load').addEventListener('change', readFile, false);
 
-    var e = this.refs.iniFile.files[0];
-    // var file=fopen(getScriptPath(e),0);
-    console.log(e);
+    var input = event.target;
+    var text = NaN;
+    var result = NaN;
+    var reader = new FileReader();
+    var movies_list = [];
+    reader.onload = function(){
+      text = reader.result;
+      this.setState({
+        movies_list : movies_list
+      })
+      result = convertINI(text);
+      console.log(result);
+
+    };
+    reader.readAsText(input.files[0]);
 
   }
 
@@ -190,7 +190,7 @@ export class Home extends React.Component {
                   <input type="number" ref='release_year' placeholder="Release year"/>
                   <input ref='stars' placeholder="Stars"/>
 
-                  <input ref="iniFile" onChange={this.loadINI} type='file'/>
+                  <input ref="iniFile" id="file-input" onChange={this.loadINI} type='file'/>
 
                   <button onClick={this.addNewMovie}>Add movie</button>
                 </form>
