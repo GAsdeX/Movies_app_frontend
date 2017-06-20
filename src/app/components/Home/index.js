@@ -3,7 +3,11 @@
 import React from "react";
 import {CardView} from './CardView/';
 
-import { convertINI, sortOn } from './config';
+import { convertINI, sortOn, findArr ,findActor} from './config';
+
+var arr = [{title:'Holly'},{title:'margin'},{title:'lol'},{title:'padding'}]
+
+console.log(findArr('in',arr));
 
 export class Home extends React.Component {
 
@@ -106,7 +110,7 @@ export class Home extends React.Component {
               movies_list.push(i)
           })
           //inside function this will point to function itself, not on a class
-          this.setState({
+          self.setState({
               movies_list : movies_list
           })
           debugger;
@@ -129,6 +133,45 @@ export class Home extends React.Component {
     }
 
   }
+  searchItem(event){
+    event.preventDefault();
+
+    let searshing_val = this.refs.searshing_val.value;
+    let search_actor = this.refs.actor.value;
+
+
+    var movies = [];
+
+    var self = this;
+    $.get('http://localhost:3000/getmovies', function(data) {
+        data.forEach(function(i){
+            movies.push(i)
+        })
+        //inside function this will point to function itself, not on a class
+        if (searshing_val.length == 0 && search_actor.length == 0){
+          self.setState({
+            movies_list : movies
+          })
+
+        }
+        if (searshing_val.length == 0 && search_actor.length > 0) {
+          self.setState({
+            movies_list : findActor(searshing_val, self.state.movies_list)
+          })
+        }
+        if (searshing_val.length > 0 && search_actor.length == 0) {
+          self.setState({
+            movies_list : findArr(searshing_val, self.state.movies_list)
+          })
+        }
+        else {
+          self.setState({
+            movies_list : findActor(search_actor, findArr(searshing_val, self.state.movies_list))
+          })
+          console.log(movies);
+        }
+    });
+  }
   componentDidMount() {  // refrash while uploading
 
       console.log('yo');
@@ -143,11 +186,10 @@ export class Home extends React.Component {
           //inside function this will point to function itself, not on a class
           self.setState({
               movies_list : movies_list
-          })
+          });
       });
-
-
   }
+
   describeCard(i){
     console.log(i);
     this.setState({
@@ -210,6 +252,7 @@ export class Home extends React.Component {
     this.describeCard = this.describeCard.bind(this);
     this.sortByAlphabet = this.sortByAlphabet.bind(this);
     this.hideDescr = this.hideDescr.bind(this);
+    this.searchItem = this.searchItem.bind(this);
 
     this.state = {
       movies_list : [],
@@ -262,17 +305,19 @@ export class Home extends React.Component {
     return (
           <div>
 
+            <div className="row"><input className="col-xs-4" placeholder="Title" type="text" ref="searshing_val" onChange={this.searchItem}></input></div>
+
+            <div className="row"><input className="col-xs-4" placeholder="Actor" type="text" ref="actor" onChange={this.searchItem}></input></div>
+
             <div className="col-xs-12"><button type="submit" onClick={this.sortByAlphabet}>SORT BY TITLE</button></div>
             {this.state.movies_list.map((item, i) =>
               <div className="col-xs-12 col-sm-6 col-md-4 col-lg-3" key={i}>
                 <button onClick={()=>{this.dellMovie(item._id)}} className="delete-tihs"></button>
                 <div className="card-wrapper" onClick={() => {this.describeCard(item)}}>
 
-                  <button className="extend-this"></button>
                   <div className="top-bar">
                     <p>{item.title}</p>
                   </div>
-
                   <div className="bottom-bar">{item.format}</div>
                 </div>
 

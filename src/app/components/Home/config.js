@@ -17,8 +17,6 @@ export function convertINI(data) {
 
             if (line) {
 
-
-
                 var splitedkey = line.split(":")[0].replace(" ", "_").toLowerCase();
                 var spliteval = line.split(":")[1];
 
@@ -48,4 +46,26 @@ export function sortOn (arr, prop) {
             }
         }
     );
+}
+
+export function findArr(str, array){
+
+  var matchesList = []
+
+  array.map(function(i){
+    if ((i.title).includes((str))){matchesList.push(i)}
+  })
+  return matchesList;
+
+}
+
+export function findActor(str, array){
+
+  var matchesList = []
+
+  array.map(function(i){
+    if ((i.stars).includes((str))){matchesList.push(i)}
+  })
+  return matchesList;
+
 }
